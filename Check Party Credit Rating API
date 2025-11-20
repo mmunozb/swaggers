@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Check Party Credit Rating API
+  version: 1.0.0
+
+paths:
+  /checkPartyCreditRating/{id}:
+    get:
+      summary: Retrieve credit rating by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Credit rating found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditRating'
+        '404':
+          description: Not found
+
+components:
+  schemas:
+    CreditRating:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        ratingScore:
+          type: number
+        ratingDate:
+          type: string
+          format: date-time
+        creditLimit:
+          $ref: '#/components/schemas/Amount'
+        partyCreditBalance:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyCreditBalance'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        relatedPayment:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedPayment'
+        quote:
+          $ref: '#/components/schemas/Quote'
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+        createDateTime:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        lastUpdateBy:
+          type: string
+
+    Amount:
+      type: object
+      properties:
+        amount:
+          type: number
+        units:
+          type: string
+
+    PartyCreditBalance:
+      type: object
+      properties:
+        name:
+          type: string
+        creditBalanceAmount:
+          $ref: '#/components/schemas/Amount'
+
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+        identifierType:
+          type: string
+        partyProfileType:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileType'
+        partyIdentification:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyIdentification'
+
+    ProfileType:
+      type: object
+      properties:
+        name:
+          type: string
+
+    PartyIdentification:
+      type: object
+      properties:
+        identificationId:
+          type: string
+        identificationType:
+          type: string
+
+    RelatedPayment:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        totalAmount:
+          $ref: '#/components/schemas/Amount'
+
+    Quote:
+      type: object
+      properties:
+        id:
+          type: string
+        externalId:
+          type: string
+        quoteItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuoteItem'
+        quoteTotalPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuoteTotalPrice'
+
+    QuoteItem:
+      type: object
+      properties:
+        quantity:
+          type: number
+        state:
+          type: string
+        productOffering:
+          $ref: '#/components/schemas/ProductOffering'
+        quoteItemPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuoteItemPrice'
+
+    ProductOffering:
+      type: object
+      properties:
+        name:
+          type: string
+
+    QuoteItemPrice:
+      type: object
+      properties:
+        price:
+          $ref: '#/components/schemas/Price'
+
+    QuoteTotalPrice:
+      type: object
+      properties:
+        name:
+          type: string
+        priceType:
+          type: string
+        price:
+          $ref: '#/components/schemas/Price'
+
+    Price:
+      type: object
+      properties:
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Amount'
+
+    Characteristic:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
