@@ -1,0 +1,617 @@
+swagger: '2.0'
+info:
+  version: 1.0.7
+  title: API GeographicAddress
+  description: |-
+    ## TMF API Reference : TMF 673 - Geographic Address Management
+    ### Release : 17.5 - January 2018
+  contact: {}
+host: serverRoot
+basePath: /tmf-api/geographicAddressManagement/v1/
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /geographicAddressValidation:
+    post:
+      description: |
+        This operation creates a geographic address validation request.
+
+        Specific business errors for current operation will be encapsulated in
+
+        HTTP Response 422 Unprocessable entity
+      summary: createGeographicAddressValidation
+      tags:
+        - GeographicAddressValidation
+      operationId: createGeographicAddressValidation
+      deprecated: false
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          type: string
+          description: >-
+            A secure token chain that indicates that it is an authorized
+            request.
+        - name: correlatorId
+          in: header
+          required: false
+          type: string
+          description: >-
+            NB ID used to match the request with its corresponding SB
+            asynchronous notification. The format should be like below: 
+             ASPID+yyyyMMddHHmmss+sequence(5 digits) 
+             Note:+ means concat 
+             The ASPID is the M2M indentifer, and its length is maximum 21 characters 
+             yyyyMMddHHmmss is the UTC time format. 
+             Sequence is an increased sequence, and its length is 5 digits.the sequence should be started with 00001 and end with 99999. 
+             Example: TP000002322017022409365100021
+        - name: messageId
+          in: header
+          required: false
+          type: string
+          description: Transaction identity for each request
+        - name: requestDate
+          in: header
+          required: false
+          type: string
+          format: date-time
+          description: Time and date the request is sent
+        - name: targetSystem
+          in: header
+          required: false
+          type: string
+          description: The system where targets the request.
+        - name: originSystem
+          in: header
+          required: false
+          type: string
+          description: The system where is originated the request.
+        - name: country
+          in: header
+          required: false
+          type: string
+          description: 'Indicates the country to route. ISO 1366 – 3 character Example: MEX'
+        - name: ipClient
+          in: header
+          required: false
+          type: string
+          description: 'IP from the device since the invocation originated.'
+        - name: channel
+          in: header
+          required: false
+          type: string
+          description: 'Identifies the channel that invokes the service.'
+        - name: applicationId
+          in: header
+          required: false
+          type: string
+          description: 'Application Id.'
+        - name: subChannel
+          in: header
+          required: false
+          type: string
+          description: 'Identifies the sub-channel that invokes the service.'
+        - name: device
+          in: header
+          required: false
+          type: string
+          description: 'Id of the device from which the invocation originated.'
+        - in: header
+          name: userName
+          description: user Identifier
+          required: false
+          type: string
+          minimum: 1
+          maximum: 256
+        - in: header
+          name: operatorId
+          description: Operator Identifier
+          required: false
+          type: string
+          minimum: 1
+          maximum: 256
+        - name: body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/GeographicAddressValidation'
+      responses:
+        '201':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GeographicAddressValidation'
+          headers:
+            correlatorId:
+              type: string
+            country:
+              type: string
+            originSystem:
+              type: string
+            requestDate:
+              type: string
+            messageId:
+              type: string
+            targetSystem:
+              type: string
+        '400':
+          description: |-
+            Bad Request
+
+            List of supported error codes:
+            - 20: Invalid URL parameter value
+            - 21: Missing body
+            - 22: Invalid body
+            - 23: Missing body field
+            - 24: Invalid body field
+            - 25: Missing header
+            - 26: Invalid header value
+            - 27: Missing query-string parameter
+            - 28: Invalid query-string parameter value
+          headers:
+            correlatorId:
+              type: string
+            country:
+              type: string
+            originSystem:
+              type: string
+            requestDate:
+              type: string
+            messageId:
+              type: string
+            targetSystem:
+              type: string
+          schema:
+            $ref: '#/definitions/GenericFault'
+        '404':
+          description: |-
+            Not Found
+
+            List of supported error codes:
+            - 60: Resource not found
+          headers:
+            correlatorId:
+              type: string
+            country:
+              type: string
+            originSystem:
+              type: string
+            requestDate:
+              type: string
+            messageId:
+              type: string
+            targetSystem:
+              type: string
+          schema:
+            $ref: '#/definitions/GenericFault'
+        '405':
+          description: |-
+            Method Not Allowed
+
+            List of supported error codes:
+            - 61: Method not allowed
+          headers:
+            correlatorId:
+              type: string
+            country:
+              type: string
+            originSystem:
+              type: string
+            requestDate:
+              type: string
+            messageId:
+              type: string
+            targetSystem:
+              type: string
+          schema:
+            $ref: '#/definitions/GenericFault'
+        '422':
+          description: |-
+            Unprocessable entity
+
+            Functional error
+          headers:
+            correlatorId:
+              type: string
+            country:
+              type: string
+            originSystem:
+              type: string
+            requestDate:
+              type: string
+            messageId:
+              type: string
+            targetSystem:
+              type: string
+          schema:
+            $ref: '#/definitions/GenericFault'
+        '500':
+          description: |-
+            Internal Server Error
+
+            List of supported error codes:
+            - 1: Internal error
+          headers:
+            correlatorId:
+              type: string
+            country:
+              type: string
+            originSystem:
+              type: string
+            requestDate:
+              type: string
+            messageId:
+              type: string
+            targetSystem:
+              type: string
+          schema:
+            $ref: '#/definitions/GenericFault'
+definitions:
+  DetailResType:
+    title: DetailResType
+    description: Error defined for detail the fault
+    type: object
+    properties:
+      code:
+        description: Application related code
+        type: string
+      severityLevel:
+        description: Ifentifies the severity of the transaction
+        type: string
+      description:
+        description: Text that explains the reason for error.
+        type: string
+      actor:
+        description: Response Actor.
+        type: string
+      businessMeaning:
+        description: Meaning of the response.
+        type: string
+    required:
+      - code
+      - description
+  GenericFault:
+    title: GenericFault
+    description: Error defined for detail the fault
+    type: object
+    properties:
+      messageUUID:
+        description: ID of message
+        type: string
+      responseDate:
+        description: Date of the response
+        type: string
+        format: date-time
+      latency:
+        description: Time of the operation execution in milliseconds
+        type: integer
+        format: int32
+      errorList:
+        $ref: '#/definitions/ErrorListType'
+    required:
+      - messageUUID
+      - responseDate
+      - latency
+  ErrorListType:
+    title: ErrorListType
+    description: List with the detail of the faults
+    type: object
+    properties:
+      error:
+        type: array
+        items:
+          $ref: '#/definitions/DetailResType'
+  GeographicPoint:
+    title: GeographicPoint
+    description: A GeographicPoint defines a geographic point through coordinates.
+    type: object
+    properties:
+      x:
+        description: x coordinate (usually latitude)
+        type: string
+      'y':
+        description: y coordinate (usually longitude)
+        type: string
+      z:
+        description: z coordinate (usually elevation)
+        type: string
+  GeographicLocation:
+    title: GeographicLocation
+    description: >-
+      A GeographicLocation allows describing through coordinate(s) a point, a
+      line or a space
+    type: object
+    properties:
+      id:
+        description: Unique Identifier of a GeoLocation
+        type: string
+      href:
+        description: href of the GeoLocation
+        type: string
+      name:
+        description: Name of a GeoLocation
+        type: string
+      geometryType:
+        description: >-
+          Type allows describing Geolocation form: it could be a point, a line,
+          a polygon, a cylinder, etc....
+        type: string
+      accuracy:
+        type: string
+      spatialRef:
+        type: string
+      '@type':
+        description: Indicates the type of resource
+        type: string
+      '@schemaLocation':
+        description: A link to the schema describing this REST Resource
+        type: string
+      geometry:
+        type: array
+        items:
+          $ref: '#/definitions/GeographicPoint'
+  GeographicSubAddress:
+    title: GeographicSubAddress
+    description: >-
+      It is used for addressing within a property in an urban area (country
+      properties are often defined differently). It may refer to a building, a
+      building cluster, or a floor of a multistory building.
+    type: object
+    properties:
+      id:
+        description: Unique Identifier of the subAddress
+        type: string
+      type:
+        description: 'Type of subAddress : it can be a subunit or a private street'
+        type: string
+      name:
+        description: Name of the subAddress to identify it with a meaningful identification
+        type: string
+      description:
+        description: Description of the subAddress
+        type: string
+      subUnitType:
+        description: |-
+          The type of subunit
+          e.g.BERTH, FLAT, PIER, SUITE, SHOP, TOWER, UNIT, WHARF.
+        type: string
+      subUnitNumber:
+        description: |-
+          The discriminator used for the subunit
+          often just a simple number e.g. FLAT 5, may also be a range
+        type: string
+      levelType:
+        description: Describes level types within a building
+        type: string
+      levelNumber:
+        description: 'Used where a level type may be repeated e.g. BASEMENT 1, BASEMENT 2'
+        type: string
+      buildingName:
+        description: Allows for buildings that have well-known names
+        type: string
+      privateStreetNumber:
+        description: Private streets numbers internal to a private street
+        type: string
+      privateStreetName:
+        description: >-
+          Private streets internal to a property (e.g. a university) may have
+          internal names that are not recorded by the land title office
+        type: string
+      '@type':
+        description: Type of the resource for this subAdress
+        type: string
+      '@schemaLocation':
+        description: A link to the schema describing this REST Resource
+        type: string
+  GeographicAddress:
+    title: GeographicAddress
+    description: >-
+      A geographic address is a structured textual way of describing how to find
+      a Property in an urban area (country properties are often defined
+      differently)
+    type: object
+    properties:
+      id:
+        description: Unique identifier of the address
+        type: string
+      externalId:
+        description: Unique identifier of the address in an external system
+        type: string
+      href:
+        description: An URI used to access to the address resource
+        type: string
+      type:
+        $ref: '#/definitions/Area'
+      streetNr:
+        description: >-
+          Number identifying a specific property on a public street. It may be
+          combined with streetNrLast for ranged addresses
+        type: string
+      streetName:
+        description: Name of the street or other street type
+        type: string
+      streetType:
+        $ref: '#/definitions/Area'
+      postcode:
+        description: >-
+          Descriptor for a postal delivery area, used to speed and simplify the
+          delivery of mail (also known as zipcode)
+        type: string
+      locality:
+        $ref: '#/definitions/Area'
+      city:
+        $ref: '#/definitions/Area'
+      stateOrProvince:
+        $ref: '#/definitions/Area'
+      country:
+        $ref: '#/definitions/Area'
+      '@type':
+        description: >-
+          Indicates the type of the resource. Here can be
+          'UrbanPropertyAddress', ‘FormattedAddress’, ‘JapanesePropertyAddress’
+          , ‘AustralianPropertyAddress’, etc…
+        type: string
+      '@schemaLocation':
+        description: >-
+          A Link to the schema describing this REST Resource. The resource
+          described 'UrbanPropertyAddress' but a schema could be used for other
+          property address description.
+        type: string
+      geographicLocation:
+        $ref: '#/definitions/GeographicLocation'
+      geographicSubAddress:
+        type: array
+        items:
+          $ref: '#/definitions/GeographicSubAddress'
+      area:
+        type: array
+        items:
+          $ref: '#/definitions/Area'
+      geographicAddressSpec:
+        type: array
+        items:
+          $ref: '#/definitions/GeographicAddressSpec'
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/LocationCharacteristic'
+      owner:
+        description: Name of the geographic address owner
+        type: string
+  GeographicAddressSpec:
+    title: GeographicAddressSpec
+    description: >-
+      A geographic address is a structured textual way of describing how to find
+      a Property in an urban area (country properties are often defined
+      differently)
+    type: object
+    properties:
+      id:
+        description: Unique identifier of the address
+        type: string
+      href:
+        description: An URI used to access to the address resource
+        type: string
+      type:
+        description: Type of the GeographicAddressSpec
+        type: string
+      '@type':
+        description: >-
+          Indicates the type of the resource. Here can be
+          'UrbanPropertyAddress', ‘FormattedAddress’, ‘JapanesePropertyAddress’
+          , ‘AustralianPropertyAddress’, etc…
+        type: string
+      '@schemaLocation':
+        description: >-
+          A Link to the schema describing this REST Resource. The resource
+          described 'UrbanPropertyAddress' but a schema could be used for other
+          property address description.
+        type: string
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/LocationCharacteristic'
+  GeographicAddressValidation:
+    title: GeographicAddressValidation
+    description: >-
+      Resource used to support a request for a validation address : check if a
+      geographic address described by values attributes exists)
+
+      If exist, id and href are provided
+
+      if not, alternate address(es) could be provided
+    type: object
+    properties:
+      id:
+        description: Unique identifier of the Address Validation
+        type: string
+      externalId:
+        description: External identifier of the Address Validation
+        type: string
+      status:
+        description: >-
+          Status of the address validation (inProgress, terminatedWithErrror,
+          done).
+        type: string
+      state:
+        description: state of the address validation
+        type: string
+      createdDateTime:
+        description: Date when the address validation was create
+        type: string
+        format: date-time
+      lastUpdateDateTime:
+        description: Date when the address validation was updated by last time
+        type: string
+        format: date-time
+      createdBy:
+        description: the user that creates the address validation
+        type: string
+      lastUpdateBy:
+        description: the user that updates the address validation by last time
+        type: string
+      '@type':
+        description: Indicates the type of the resource.
+        type: string
+      '@schemaLocation':
+        description: Link to schema describing this REST resource.
+        type: string
+      validAddress:
+        $ref: '#/definitions/GeographicAddress'
+      geographicAddressSpec:
+        type: array
+        items:
+          $ref: '#/definitions/GeographicAddressSpec'
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/LocationCharacteristic'
+  LocationCharacteristic:
+    title: LocationCharacteristic
+    description: 'Name/value pairs, used to extra characterized the Area'
+    type: object
+    properties:
+      id:
+        description: Identifier of the characteristic
+        type: string
+      name:
+        description: Name of the characteristic
+        type: string
+      value:
+        description: Value of the characteristic
+        type: string
+      valueType:
+        type: string
+        description: Data type of the value of the characteristic
+  Area:
+    title: Area
+    description: >-
+      Area corresponds to a geographic area as a city, a locality, a district,
+      etc
+    type: object
+    properties:
+      id:
+        description: Unique identifier of an Area
+        type: string
+      name:
+        description: The defined name of the municipality
+        type: string
+      type:
+        description: 'SUBURB, LOCALITY, CITY, TOWN, BOROUGH, ....'
+        type: string
+      description:
+        description: Description of an Area
+        type: string
+tags:
+  - name: GeographicAddressValidation
+    description: ''
