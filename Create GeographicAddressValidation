@@ -1,0 +1,274 @@
+openapi: 3.0.3
+
+info:
+  title: Party Credit Rating API
+  version: 1.0.0
+  description: API to create and evaluate credit rating for a party based on quote information.
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: https://api-qa.example.com/v1
+    description: QA server
+
+paths:
+  /checkPartyCreditRating:
+    post:
+      summary: Create and evaluate party credit rating
+      description: Creates a credit rating evaluation for a party based on quote, pricing and characteristics information.
+      operationId: checkPartyCreditRating
+      tags:
+        - CreditRating
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EvaluationRequest"
+            example:
+              type: "Full"
+              relatedParty:
+                - id: "SalesForceEmployeeId-0001"
+                  role: "employee"
+                  identifierType: "employeeId"
+              quote:
+                id: "quoteIdInServer-001"
+                externalId: "quoteExternalId-001"
+                quoteItem:
+                  - quantity: 2
+                    productOffering:
+                      id: "idDelEquipo-001"
+                      name: "Nombre del equipo equipo como oferta"
+                      description: "Descripcion equipo"
+                      productOfferingPrice:
+                        - price:
+                            taxIncludedAmount:
+                              amount: 12
+                              units: "USD"
+                      realizingResource:
+                        - name: "Nombre del equipo fisico"
+                quoteTotalPrice:
+                  - name: "purchaseLimit"
+                    priceType: "no-recurrent"
+                    price:
+                      taxIncludedAmount:
+                        amount: 50
+                        units: "USD"
+                  - name: "recurringAmount"
+                    priceType: "recurrent"
+                    price:
+                      taxIncludedAmount:
+                        amount: 5
+                        units: "USD"
+              characteristic:
+                - name: "characteristic"
+                  value: "value"
+
+      responses:
+        "200":
+          description: Successful credit rating evaluation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvaluationResponse"
+
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+
+  # -------------------------------
+  # REQUEST
+  # -------------------------------
+  schemas:
+
+    EvaluationRequest:
+      type: object
+      properties:
+        type:
+          type: string
+        relatedParty:
+          type: array
+          items:
+            $ref: "#/components/schemas/RelatedParty"
+        quote:
+          $ref: "#/components/schemas/Quote"
+        characteristic:
+          type: array
+          items:
+            $ref: "#/components/schemas/Characteristic"
+
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+        identifierType:
+          type: string
+
+    Quote:
+      type: object
+      properties:
+        id:
+          type: string
+        externalId:
+          type: string
+        quoteItem:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuoteItem"
+        quoteTotalPrice:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuoteTotalPrice"
+
+    QuoteItem:
+      type: object
+      properties:
+        quantity:
+          type: number
+        productOffering:
+          $ref: "#/components/schemas/ProductOffering"
+
+    ProductOffering:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        productOfferingPrice:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductOfferingPrice"
+        realizingResource:
+          type: array
+          items:
+            $ref: "#/components/schemas/RealizingResource"
+
+    ProductOfferingPrice:
+      type: object
+      properties:
+        price:
+          $ref: "#/components/schemas/Price"
+
+    Price:
+      type: object
+      properties:
+        taxIncludedAmount:
+          $ref: "#/components/schemas/TaxIncludedAmount"
+
+    TaxIncludedAmount:
+      type: object
+      properties:
+        amount:
+          type: number
+        units:
+          type: string
+
+    RealizingResource:
+      type: object
+      properties:
+        name:
+          type: string
+
+    QuoteTotalPrice:
+      type: object
+      properties:
+        name:
+          type: string
+        priceType:
+          type: string
+        price:
+          $ref: "#/components/schemas/Price"
+
+    Characteristic:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+
+    # -------------------------------
+    # RESPONSE
+    # -------------------------------
+    EvaluationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        validFor:
+          $ref: "#/components/schemas/ValidFor"
+        relatedPayment:
+          type: array
+          items:
+            $ref: "#/components/schemas/RelatedPayment"
+        quote:
+          $ref: "#/components/schemas/QuoteSummary"
+        policyRule:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyRule"
+        characteristic:
+          type: array
+          items:
+            $ref: "#/components/schemas/Characteristic"
+
+    ValidFor:
+      type: object
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+
+    RelatedPayment:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        totalAmount:
+          $ref: "#/components/schemas/TaxIncludedAmount"
+
+    QuoteSummary:
+      type: object
+      properties:
+        externalId:
+          type: string
+
+    PolicyRule:
+      type: object
+      properties:
+        description:
+          type: string
+
+    # -------------------------------
+    # ERRORS
+    # -------------------------------
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
